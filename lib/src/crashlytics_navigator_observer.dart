@@ -29,7 +29,8 @@ class CrashlyticsNavigatorObserver extends NavigatorObserver {
   void didRemove(Route route, Route? previousRoute) {
     super.didRemove(route, previousRoute);
     // This is less common for screen tracking, but can be useful
-    _logScreenChange(previousRoute, 'Remove'); // Log the screen that might become active
+    _logScreenChange(
+        previousRoute, 'Remove'); // Log the screen that might become active
   }
 
   void _logScreenChange(Route? route, String action) {
@@ -40,8 +41,10 @@ class CrashlyticsNavigatorObserver extends NavigatorObserver {
     } else {
       // For routes without names (e.g., MaterialPageRoute without a name)
       // You might want to log the route type or a generic message.
-      errorHandlingService.log('Navigation: $action to unnamed route (${route.runtimeType})');
-      errorHandlingService.setCustomKey('current_screen', 'Unnamed Route: ${route.runtimeType}');
+      errorHandlingService
+          .log('Navigation: $action to unnamed route (${route.runtimeType})');
+      errorHandlingService.setCustomKey(
+          'current_screen', 'Unnamed Route: ${route.runtimeType}');
     }
   }
 }

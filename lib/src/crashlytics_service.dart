@@ -239,18 +239,15 @@ class ErrorHandlingService {
       'cast error',
       'stackoverflowerror',
       'cyclic initialization',
-
       'runtimeexception',
       'illegalargumentexception',
       'illegalstateexception',
       'arrayindexoutofboundsexception',
       'indexoutofboundsexception',
-
       'signal sigabrt',
       'signal sigsegv',
       'fatal error',
       'unrecognized selector sent to instance',
-
       'binding has not yet been initialized',
     ];
 
