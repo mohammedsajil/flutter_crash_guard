@@ -15,7 +15,7 @@ Add to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_crash_guard: ^1.0.0
+  flutter_crash_guard: ^1.0.1
 ```
 
 Ensure your app has Firebase configured (e.g. `Firebase.initializeApp` and Crashlytics in your project).
