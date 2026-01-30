@@ -7,7 +7,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 final errorHandlingServiceProvider = Provider<ErrorHandlingService>((ref) {
   throw UnimplementedError(
-      'errorHandlingServiceProvider must be overridden in main.');
+    'errorHandlingServiceProvider must be overridden in main.',
+  );
 }); //throw UnimplementedError is a placeholder.
 
 class ErrorHandlingService {
@@ -18,8 +19,10 @@ class ErrorHandlingService {
   ///
   /// [firebaseOptions]: The FirebaseOptions for the current platform.
   /// [enableInDebugMode]: Set to true to enable Crashlytics collection even in debug mode.
-  Future<void> initialize(FirebaseOptions firebaseOptions,
-      {bool enableInDebugMode = false}) async {
+  Future<void> initialize(
+    FirebaseOptions firebaseOptions, {
+    bool enableInDebugMode = false,
+  }) async {
     try {
       await Firebase.initializeApp(options: firebaseOptions);
       _crashlytics = FirebaseCrashlytics.instance;
@@ -36,15 +39,19 @@ class ErrorHandlingService {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         await _crashlytics.setCustomKey('app_version', packageInfo.version);
         await _crashlytics.setCustomKey(
-            'build_number', packageInfo.buildNumber);
+          'build_number',
+          packageInfo.buildNumber,
+        );
       }
 
       _crashlyticsReady = true;
       debugPrint(
-          'ErrorHandlingService: Firebase Crashlytics initialized. Collection enabled: $collectionEnabled');
+        'ErrorHandlingService: Firebase Crashlytics initialized. Collection enabled: $collectionEnabled',
+      );
     } catch (e, stack) {
       debugPrint(
-          'ErrorHandlingService: Firebase Crashlytics initialization failed: $e\n$stack');
+        'ErrorHandlingService: Firebase Crashlytics initialization failed: $e\n$stack',
+      );
     }
   }
 
@@ -54,7 +61,8 @@ class ErrorHandlingService {
   Future<void> setUserIdentifier(String identifier) async {
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Crashlytics not ready, cannot set user identifier.');
+        'ErrorHandlingService: Crashlytics not ready, cannot set user identifier.',
+      );
       return;
     }
     await _crashlytics.setUserIdentifier(identifier);
@@ -68,7 +76,8 @@ class ErrorHandlingService {
   Future<void> setCustomKey(String key, Object value) async {
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Crashlytics not ready, cannot set custom key "$key".');
+        'ErrorHandlingService: Crashlytics not ready, cannot set custom key "$key".',
+      );
       return;
     }
     if (value is String || value is bool || value is num) {
@@ -76,7 +85,8 @@ class ErrorHandlingService {
     } else {
       await _crashlytics.setCustomKey(key, value.toString());
       debugPrint(
-          'ErrorHandlingService: Custom key "$key" value was converted to String.');
+        'ErrorHandlingService: Custom key "$key" value was converted to String.',
+      );
     }
   }
 
@@ -86,7 +96,8 @@ class ErrorHandlingService {
   Future<void> log(String message) async {
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Crashlytics not ready, cannot log message: "$message".');
+        'ErrorHandlingService: Crashlytics not ready, cannot log message: "$message".',
+      );
       return;
     }
     await _crashlytics.log(message);
@@ -98,25 +109,33 @@ class ErrorHandlingService {
   /// fatal or non-fatal based on internal patterns.
   void handleFlutterError(FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(
-        details); // Always dump to console for debugging
+      details,
+    ); // Always dump to console for debugging
 
     log('FlutterError caught: ${details.exceptionAsString()}');
 
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Flutter error occurred before Crashlytics was ready. Details: ${details.exception}');
+        'ErrorHandlingService: Flutter error occurred before Crashlytics was ready. Details: ${details.exception}',
+      );
       return;
     }
 
     final isFatal = _shouldTreatAsFatal(
-        details.exception, details.stack); // Use the general classifier
+      details.exception,
+      details.stack,
+    ); // Use the general classifier
     setCustomKey('error_type', 'FlutterError');
     setCustomKey('fatal_classification', isFatal ? 'Fatal' : 'Non-Fatal');
     setCustomKey('flutter_error_library', details.library ?? 'unknown');
     setCustomKey(
-        'flutter_error_context', details.context?.toString() ?? 'unknown');
-    setCustomKey('flutter_error_silent',
-        details.silent); // Useful if Flutter silently handled it
+      'flutter_error_context',
+      details.context?.toString() ?? 'unknown',
+    );
+    setCustomKey(
+      'flutter_error_silent',
+      details.silent,
+    ); // Useful if Flutter silently handled it
 
     // recordFlutterFatalError and recordFlutterError are specific APIs for FlutterErrorDetails
     if (isFatal) {
@@ -138,19 +157,25 @@ class ErrorHandlingService {
 
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Platform error occurred before Crashlytics was ready.');
+        'ErrorHandlingService: Platform error occurred before Crashlytics was ready.',
+      );
       return true; // Still return true to prevent app termination by OS
     }
 
-    final isFatal =
-        _shouldTreatAsFatal(error, stack); // Apply classification here
+    final isFatal = _shouldTreatAsFatal(
+      error,
+      stack,
+    ); // Apply classification here
     setCustomKey('error_type', 'PlatformError');
     setCustomKey('fatal_classification', isFatal ? 'Fatal' : 'Non-Fatal');
 
-    _crashlytics.recordError(error, stack,
-        fatal: isFatal, // Use the classified fatal status
-        reason: 'PlatformDispatcher.onError',
-        information: ['Platform error message: $errorMessage']);
+    _crashlytics.recordError(
+      error,
+      stack,
+      fatal: isFatal, // Use the classified fatal status
+      reason: 'PlatformDispatcher.onError',
+      information: ['Platform error message: $errorMessage'],
+    );
     return true; // Important: Always return true to signal the error has been handled.
   }
 
@@ -164,22 +189,29 @@ class ErrorHandlingService {
 
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Zoned error occurred before Crashlytics was ready.');
+        'ErrorHandlingService: Zoned error occurred before Crashlytics was ready.',
+      );
       return;
     }
 
     try {
-      final isFatal =
-          _shouldTreatAsFatal(error, stack); // Apply classification here
+      final isFatal = _shouldTreatAsFatal(
+        error,
+        stack,
+      ); // Apply classification here
       setCustomKey('error_type', 'ZonedError');
       setCustomKey('fatal_classification', isFatal ? 'Fatal' : 'Non-Fatal');
       setCustomKey('zoned_error_runtime_type', error.runtimeType.toString());
-      _crashlytics.recordError(error, stack,
-          fatal: isFatal,
-          reason: 'runZonedGuarded'); // Use classified fatal status
+      _crashlytics.recordError(
+        error,
+        stack,
+        fatal: isFatal,
+        reason: 'runZonedGuarded',
+      ); // Use classified fatal status
     } catch (e, s) {
       debugPrint(
-          'ErrorHandlingService: Failed to record zoned error in Crashlytics: $error');
+        'ErrorHandlingService: Failed to record zoned error in Crashlytics: $error',
+      );
       debugPrint('ErrorHandlingService: Crashlytics recording failure: $e\n$s');
     }
   }
@@ -195,10 +227,13 @@ class ErrorHandlingService {
     String? reason,
     Iterable<Object> information = const [],
   }) async {
-    log('GenericError recorded: ${exception.toString()} - Reason: $reason - Fatal: $fatal');
+    log(
+      'GenericError recorded: ${exception.toString()} - Reason: $reason - Fatal: $fatal',
+    );
     if (!_crashlyticsReady) {
       debugPrint(
-          'ErrorHandlingService: Tried to record error before Crashlytics ready: $exception');
+        'ErrorHandlingService: Tried to record error before Crashlytics ready: $exception',
+      );
       return;
     }
     setCustomKey('error_type', 'ManualRecord');
@@ -207,8 +242,13 @@ class ErrorHandlingService {
       setCustomKey('record_reason', reason);
     }
 
-    await _crashlytics.recordError(exception, stack,
-        fatal: fatal, reason: reason, information: information);
+    await _crashlytics.recordError(
+      exception,
+      stack,
+      fatal: fatal,
+      reason: reason,
+      information: information,
+    );
   }
 
   /// Determines if an error should be treated as fatal based on its exception and stack trace.

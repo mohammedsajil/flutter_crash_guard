@@ -62,20 +62,22 @@ mixin ErrorHandlingMixin {
     ];
 
     // Fire and forget - direct Crashlytics logging with error handling
-    unawaited(crashlytics
-        .recordError(
-      error,
-      stackTrace ?? StackTrace.current,
-      fatal: severity == ErrorSeverity.critical,
-      reason: reason ?? 'Error in $operation',
-      information: information,
-    )
-        .catchError((e) {
-      // Silently fail - don't let logging errors affect the app
-      if (kDebugMode) {
-        print('ErrorHandlingMixin: Failed to log to Crashlytics: $e');
-      }
-    }));
+    unawaited(
+      crashlytics
+          .recordError(
+            error,
+            stackTrace ?? StackTrace.current,
+            fatal: severity == ErrorSeverity.critical,
+            reason: reason ?? 'Error in $operation',
+            information: information,
+          )
+          .catchError((e) {
+            // Silently fail - don't let logging errors affect the app
+            if (kDebugMode) {
+              print('ErrorHandlingMixin: Failed to log to Crashlytics: $e');
+            }
+          }),
+    );
   }
 
   /// Better error categorization with comprehensive type checking
@@ -347,7 +349,8 @@ mixin ErrorHandlingMixin {
         // Last resort - just print to console
         if (kDebugMode) {
           print(
-              'ErrorHandlingMixin: Complete failure in error handling: $fallbackError');
+            'ErrorHandlingMixin: Complete failure in error handling: $fallbackError',
+          );
         }
       }
     }

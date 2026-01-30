@@ -1,22 +1,22 @@
 name: flutter_crash_guard
 description: Riverpod-friendly error handling mixin and Firebase Crashlytics integration with severity and categorization.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/mohammedsajil/flutter_crash_guard
 issue_tracker: https://github.com/mohammedsajil/flutter_crash_guard/issues
 documentation: https://github.com/mohammedsajil/flutter_crash_guard#readme
 license: BSD-3-Clause
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.10.8
 
 dependencies:
   flutter:
     sdk: flutter
-  hooks_riverpod: ^2.0.0
-  dio: ^5.0.0
-  firebase_core: ^3.0.0
-  firebase_crashlytics: ^4.0.0
-  package_info_plus: ^8.0.0
+  hooks_riverpod: ^3.2.0
+  dio: ^5.9.1
+  firebase_core: ^4.4.0
+  firebase_crashlytics: ^5.0.7
+  package_info_plus: ^9.0.0
 
 dev_dependencies:
   flutter_test:
