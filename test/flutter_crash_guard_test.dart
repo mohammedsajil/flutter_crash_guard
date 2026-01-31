@@ -11,4 +11,29 @@ void main() {
       expect(ErrorSeverity.values.length, 4);
     });
   });
+
+  group('ErrorHandlingMixin', () {
+    test('handleError works with getter-based service (no ref)', () {
+      final service = ErrorHandlingService();
+      final subject = _TestMixinUser(service);
+
+      expect(
+        () => subject.handleError(
+          operation: 'test',
+          error: Exception('test error'),
+          stackTrace: StackTrace.current,
+        ),
+        returnsNormally,
+      );
+    });
+  });
+}
+
+class _TestMixinUser with ErrorHandlingMixin {
+  _TestMixinUser(this._service);
+
+  final ErrorHandlingService _service;
+
+  @override
+  ErrorHandlingService get errorHandlingService => _service;
 }

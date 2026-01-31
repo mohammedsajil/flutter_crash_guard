@@ -382,3 +382,13 @@ class ErrorHandlingService {
     return true;
   }
 }
+
+/// Extension on Riverpod [Ref] for convenient access to [ErrorHandlingService].
+///
+/// Use with [ErrorHandlingMixin]: implement the getter as
+/// `ErrorHandlingService get errorHandlingService => ref.errorHandlingService;`
+extension ErrorHandlingRefExtension on Ref {
+  /// Reads [errorHandlingServiceProvider].
+  ErrorHandlingService get errorHandlingService =>
+      read(errorHandlingServiceProvider);
+}

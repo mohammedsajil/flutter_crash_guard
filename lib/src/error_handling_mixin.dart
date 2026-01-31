@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_crash_guard/src/crashlytics_service.dart';
 
@@ -26,20 +25,16 @@ enum ErrorSeverity {
 }
 
 mixin ErrorHandlingMixin {
-  /// Gets the crashlytics service from the ref
+  /// The crashlytics service for error logging.
   ///
-  /// This service provides crash reporting and error tracking.
-  /// It's the most reliable and fastest logging option for production.
-  ErrorHandlingService getCrashlytics(Ref ref) {
-    return ref.read(errorHandlingServiceProvider);
-  }
+  /// Implement with your DI (Riverpod, GetIt, Provider, Bloc, GetX, etc.).
+  ErrorHandlingService get errorHandlingService;
 
   /// Non-blocking error logging
   ///
   /// This method initiates error logging without blocking the main thread.
   /// It uses a fire-and-forget approach to ensure optimal performance.
-  void _logErrorAsync(
-    Ref ref, {
+  void _logErrorAsync({
     required String operation,
     required dynamic error,
     StackTrace? stackTrace,
@@ -48,7 +43,7 @@ mixin ErrorHandlingMixin {
     String? reason,
     ErrorSeverity? severity,
   }) {
-    final crashlytics = getCrashlytics(ref);
+    final crashlytics = errorHandlingService;
 
     // Build information array with key details
     final information = <String>[
@@ -270,8 +265,7 @@ mixin ErrorHandlingMixin {
   /// - [severity]: Override the automatic severity assignment (optional)
   /// - [dataType]: The type of data being processed (for parsing errors)
   /// - [rawData]: Raw data that failed to parse (for parsing errors)
-  void handleError(
-    Ref ref, {
+  void handleError({
     required String operation,
     required dynamic error,
     StackTrace? stackTrace,
@@ -319,7 +313,6 @@ mixin ErrorHandlingMixin {
 
       // Log the error with unified context
       _logErrorAsync(
-        ref,
         operation: operation,
         error: error,
         stackTrace: stackTrace,
@@ -337,7 +330,6 @@ mixin ErrorHandlingMixin {
       // Try to log the original error with minimal context
       try {
         _logErrorAsync(
-          ref,
           operation: operation,
           error: error,
           stackTrace: stackTrace,
